@@ -3,7 +3,7 @@ SERVER_DIR=./server
 CLIENT_DIR=./client
 DB_CONTAINER_NAME=sqlite-go-container
 DB_IMAGE_NAME=sqlite-go
-DB_FILE=exchangerate.db
+DB_FILE=exchange_rate.db
 
 # Build and Run application
 # ----------------------------------------------

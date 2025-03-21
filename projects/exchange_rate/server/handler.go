@@ -14,10 +14,32 @@ const (
 )
 
 type ExchangeRate struct {
-	USDBRL map[string]any `json:"usdbrl"`
+	USDBRL CurrencyInfo `json:"usdbrl"`
 }
 
-func exchangeRateHandler(w http.ResponseWriter, r *http.Request) {
+type CurrencyInfo struct {
+	Code      string  `json:"code"`
+	Codein    string  `json:"codein"`
+	Name      string  `json:"name"`
+	High      float64 `json:"high,string"`
+	Low       float64 `json:"low,string"`
+	VarBid    float64 `json:"varBid,string"`
+	PctChange float64 `json:"pctChange,string"`
+	Bid       float64 `json:"bid,string"`
+	Ask       float64 `json:"ask,string"`
+	Timestamp string  `json:"timestamp"`
+	CreatedAt string  `json:"createdAt"`
+}
+
+func NewExchangeRate() *ExchangeRate {
+	return &ExchangeRate{
+		USDBRL: CurrencyInfo{
+			CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
+		},
+	}
+}
+
+func (bh *BaseHandler) exchangeRateHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log.Println("Request received")
 
@@ -39,7 +61,7 @@ func exchangeRateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ex := ExchangeRate{}
+	ex := NewExchangeRate()
 	err = json.Unmarshal(body, &ex)
 	if err != nil {
 		log.Println(err)
@@ -47,6 +69,13 @@ func exchangeRateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println("Response unmarshalled", ex)
+
+	err = insertExchangeRate(ctx, bh.DB, ex)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Error inserting exchange rate", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
