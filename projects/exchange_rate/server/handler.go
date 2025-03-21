@@ -25,11 +25,18 @@ func exchangeRateHandler(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	resp := fetchExchangeRate(ctx, w)
+	if resp == nil {
+		log.Println("Response is nil")
+		http.Error(w, "Error fetching exchange rate", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Error reading response body", http.StatusInternalServerError)
+		return
 	}
 
 	ex := ExchangeRate{}
@@ -37,6 +44,7 @@ func exchangeRateHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Error unmarshalling response body", http.StatusInternalServerError)
+		return
 	}
 	log.Println("Response unmarshalled", ex)
 
@@ -50,16 +58,15 @@ func fetchExchangeRate(ctx context.Context, w http.ResponseWriter) *http.Respons
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Error reading response body", http.StatusInternalServerError)
-		w.Write([]byte("Error creating request"))
+		return nil
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Error reading response body", http.StatusInternalServerError)
-		w.Write([]byte("Error fetching exchange rate"))
+		return nil
 	}
-	defer resp.Body.Close()
 
 	return resp
 }
