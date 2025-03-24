@@ -19,3 +19,11 @@ You must submit two systems in Go:
   }
 
 - The endpoint for server.go for this assignment is `/exchange-rate` with port 8080.
+
+# Testing
+
+- To run `server`, change directory to `projects/exchange_rate/` and run `make run-server`
+- To run `client`, change directory to `projects/exchange_rate/` and run `make run-client`
+
+- Note:
+  - Running `go run server.go` won't execute the program. You must specify all files with `package main` like `go run .` or `go run server.go handler.go database.go`
