@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/rafaelcamelo31/graduate-go-course/2-module/APIs/pkg/entity"
+	"github.com/rafaelcamelo31/graduate-go-course/2-module/APIs/pkg/value_object"
 )
 
 var (
@@ -16,15 +16,15 @@ var (
 )
 
 type Product struct {
-	ID        entity.ID `json:"id"`
-	Name      string    `json:"name"`
-	Price     float64   `json:"price"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        value_object.ID `json:"id"`
+	Name      string          `json:"name"`
+	Price     float64         `json:"price"`
+	CreatedAt time.Time       `json:"created_at"`
 }
 
 func NewProduct(name string, price float64) (*Product, error) {
 	product := &Product{
-		ID:        entity.NewID(),
+		ID:        value_object.NewID(),
 		Name:      name,
 		Price:     price,
 		CreatedAt: time.Now(),
@@ -40,7 +40,7 @@ func (p *Product) Validate() error {
 	if p.ID.String() == "" {
 		return ErrIDIsRequired
 	}
-	if _, err := entity.ParseID(p.ID.String()); err != nil {
+	if _, err := value_object.ParseID(p.ID.String()); err != nil {
 		return ErrInvalidID
 	}
 	if p.Name == "" {

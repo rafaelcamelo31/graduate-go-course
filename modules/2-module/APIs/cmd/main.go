@@ -33,6 +33,10 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Post("/products", productHandler.CreateProduct)
+	r.Get("/products", productHandler.GetProducts)
+	r.Get("/products/{id}", productHandler.GetProduct)
+	r.Patch("/products/{id}", productHandler.UpdateProduct)
+	r.Delete("/products/{id}", productHandler.DeleteProduct)
 
 	log.Println("server starting at port 8000")
 	http.ListenAndServe(":8000", r)

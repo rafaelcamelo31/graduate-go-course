@@ -1,4 +1,4 @@
-package entity
+package value_object
 
 import "github.com/google/uuid"
 
