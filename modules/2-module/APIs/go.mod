@@ -3,6 +3,7 @@ module github.com/rafaelcamelo31/graduate-go-course/2-module/APIs
 go 1.22.4
 
 require (
+	github.com/go-chi/chi/v5 v5.2.1
 	github.com/spf13/viper v1.20.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.32.0
@@ -11,7 +12,6 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
-	github.com/go-chi/chi/v5 v5.2.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

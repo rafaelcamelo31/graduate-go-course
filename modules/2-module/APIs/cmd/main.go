@@ -30,6 +30,9 @@ func main() {
 	productDB := database.NewProduct(db)
 	productHandler := handler.NewProductHandler(productDB)
 
+	userDB := database.NewUser(db)
+	userHandler := handler.NewUserHandler(userDB, conf.TokenAuth, conf.JWTExpiresIn)
+
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Post("/products", productHandler.CreateProduct)
@@ -37,6 +40,9 @@ func main() {
 	r.Get("/products/{id}", productHandler.GetProduct)
 	r.Patch("/products/{id}", productHandler.UpdateProduct)
 	r.Delete("/products/{id}", productHandler.DeleteProduct)
+
+	r.Post("/users", userHandler.Create)
+	r.Post("/users/get_token", userHandler.GetJWT)
 
 	log.Println("server starting at port 8000")
 	http.ListenAndServe(":8000", r)
