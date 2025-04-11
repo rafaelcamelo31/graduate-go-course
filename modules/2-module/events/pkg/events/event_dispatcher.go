@@ -2,7 +2,11 @@ package events
 
 import "errors"
 
-var ErrHandlerAlreadyRegistered = errors.New("handler already registered")
+var (
+	ErrHandlerAlreadyRegistered = errors.New("handler already registered")
+
+	// _ EventDispatcherInterface = (*EventDispatcher)(nil)
+)
 
 type EventDispatcher struct {
 	handlers map[string][]EventHandlerInterface
@@ -25,4 +29,8 @@ func (ed *EventDispatcher) Register(eventName string, handler EventHandlerInterf
 	}
 	ed.handlers[eventName] = append(ed.handlers[eventName], handler)
 	return nil
+}
+
+func (ed *EventDispatcher) Clear() {
+	ed.handlers = make(map[string][]EventHandlerInterface)
 }
