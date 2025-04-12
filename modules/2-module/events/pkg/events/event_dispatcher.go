@@ -18,6 +18,17 @@ func NewEventDispatcher() *EventDispatcher {
 	}
 }
 
+func (ed *EventDispatcher) Dispatch(event EventInterface) error {
+	handlers, ok := ed.handlers[event.GetName()]
+	if ok {
+		for _, handler := range handlers {
+			handler.Handle(event)
+		}
+	}
+
+	return nil
+}
+
 func (ed *EventDispatcher) Register(eventName string, handler EventHandlerInterface) error {
 	_, ok := ed.handlers[eventName]
 	if ok {
@@ -33,4 +44,17 @@ func (ed *EventDispatcher) Register(eventName string, handler EventHandlerInterf
 
 func (ed *EventDispatcher) Clear() {
 	ed.handlers = make(map[string][]EventHandlerInterface)
+}
+
+func (ed *EventDispatcher) Has(eventName string, handler EventHandlerInterface) bool {
+	_, ok := ed.handlers[eventName]
+	if ok {
+		for _, h := range ed.handlers[eventName] {
+			if h == handler {
+				return true
+			}
+		}
+	}
+
+	return false
 }
