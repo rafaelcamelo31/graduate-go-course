@@ -27,3 +27,23 @@ Example:
   - Register events and operations
   - Dispatch/Fire an event to execute operations
 ```
+
+# Message Broker - RabbitMQ
+
+Implementation of `Advanced Message Queuing Protocol`.
+
+A message broker acts as a middleman for various services. They can be used to reduce loads and delivery times of web application servers by delegating tasks that would normally take up a lot of time or resources to a third party that has no other job.
+Cited from -> [About RabbitMQ](https://www.cloudamqp.com/blog/part1-rabbitmq-for-beginners-what-is-rabbitmq.html)
+
+Components of Message Broker
+
+- Producer
+  - Sends data to share with other services
+- Exchange
+  - Router to send data to Queue, according to binding key
+- Queue
+  - Queues data sent from Producer and Exchange
+- Consumer
+  - Final destination to receive data
+
+<img src="rabbitmq-example.gif" width="700" height="350"/>
