@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"io"
 
 	"github.com/rafaelcamelo31/graduate-go-course/3-module/grpc/internal/database"
 	categorypb "github.com/rafaelcamelo31/graduate-go-course/3-module/grpc/internal/gen/pbs"
@@ -69,4 +70,58 @@ func (c *CategoryService) GetCategory(ctx context.Context, req *categorypb.GetCa
 	}
 
 	return resp, nil
+}
+
+// Client-side streaming
+func (c *CategoryService) CreateCategoryStream(stream categorypb.CategoryService_CreateCategoryStreamServer) error {
+	categories := &categorypb.ListCategoriesResponse{}
+
+	for {
+		category, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(categories)
+		}
+		if err != nil {
+			return err
+		}
+
+		categoryResult, err := c.CategoryDB.Create(category.Name, category.Description)
+		if err != nil {
+			return err
+		}
+		categories.Categories = append(categories.Categories, &categorypb.Category{
+			Id:          categoryResult.ID,
+			Name:        categoryResult.Name,
+			Description: categoryResult.Description,
+		})
+
+	}
+}
+
+// Bi-directional streaming
+func (c *CategoryService) CreateCategoryBidirectionalStream(stream categorypb.CategoryService_CreateCategoryBidirectionalStreamServer) error {
+
+	for {
+		category, err := stream.Recv()
+		if err == io.EOF {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+
+		categoryResult, err := c.CategoryDB.Create(category.Name, category.Description)
+		if err != nil {
+			return err
+		}
+
+		err = stream.Send(&categorypb.Category{
+			Id:          categoryResult.ID,
+			Name:        categoryResult.Name,
+			Description: categoryResult.Description,
+		})
+		if err != nil {
+			return err
+		}
+	}
 }

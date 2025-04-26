@@ -23,6 +23,10 @@ message CreateCategoryRequest {
 
 service CategoryService {
   rpc CreateCategory(CreateCategoryRequest) returns (Category) {}
+  rpc CreateCategoryStream(stream CreateCategoryRequest)
+      returns (ListCategoriesResponse) {}
+  rpc CreateCategoryBidirectionalStream(stream CreateCategoryRequest)
+      returns (stream Category) {}
   rpc ListCategories(google.protobuf.Empty) returns (ListCategoriesResponse) {}
   rpc GetCategory(GetCategoryRequest) returns (Category) {}
 }

@@ -20,9 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	CategoryService_CreateCategory_FullMethodName = "/fullcycle.category.v1.CategoryService/CreateCategory"
-	CategoryService_ListCategories_FullMethodName = "/fullcycle.category.v1.CategoryService/ListCategories"
-	CategoryService_GetCategory_FullMethodName    = "/fullcycle.category.v1.CategoryService/GetCategory"
+	CategoryService_CreateCategory_FullMethodName                    = "/fullcycle.category.v1.CategoryService/CreateCategory"
+	CategoryService_CreateCategoryStream_FullMethodName              = "/fullcycle.category.v1.CategoryService/CreateCategoryStream"
+	CategoryService_CreateCategoryBidirectionalStream_FullMethodName = "/fullcycle.category.v1.CategoryService/CreateCategoryBidirectionalStream"
+	CategoryService_ListCategories_FullMethodName                    = "/fullcycle.category.v1.CategoryService/ListCategories"
+	CategoryService_GetCategory_FullMethodName                       = "/fullcycle.category.v1.CategoryService/GetCategory"
 )
 
 // CategoryServiceClient is the client API for CategoryService service.
@@ -30,6 +32,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CategoryServiceClient interface {
 	CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*Category, error)
+	CreateCategoryStream(ctx context.Context, opts ...grpc.CallOption) (CategoryService_CreateCategoryStreamClient, error)
+	CreateCategoryBidirectionalStream(ctx context.Context, opts ...grpc.CallOption) (CategoryService_CreateCategoryBidirectionalStreamClient, error)
 	ListCategories(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
 	GetCategory(ctx context.Context, in *GetCategoryRequest, opts ...grpc.CallOption) (*Category, error)
 }
@@ -50,6 +54,73 @@ func (c *categoryServiceClient) CreateCategory(ctx context.Context, in *CreateCa
 		return nil, err
 	}
 	return out, nil
+}
+
+func (c *categoryServiceClient) CreateCategoryStream(ctx context.Context, opts ...grpc.CallOption) (CategoryService_CreateCategoryStreamClient, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &CategoryService_ServiceDesc.Streams[0], CategoryService_CreateCategoryStream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &categoryServiceCreateCategoryStreamClient{ClientStream: stream}
+	return x, nil
+}
+
+type CategoryService_CreateCategoryStreamClient interface {
+	Send(*CreateCategoryRequest) error
+	CloseAndRecv() (*ListCategoriesResponse, error)
+	grpc.ClientStream
+}
+
+type categoryServiceCreateCategoryStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *categoryServiceCreateCategoryStreamClient) Send(m *CreateCategoryRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *categoryServiceCreateCategoryStreamClient) CloseAndRecv() (*ListCategoriesResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(ListCategoriesResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *categoryServiceClient) CreateCategoryBidirectionalStream(ctx context.Context, opts ...grpc.CallOption) (CategoryService_CreateCategoryBidirectionalStreamClient, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &CategoryService_ServiceDesc.Streams[1], CategoryService_CreateCategoryBidirectionalStream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &categoryServiceCreateCategoryBidirectionalStreamClient{ClientStream: stream}
+	return x, nil
+}
+
+type CategoryService_CreateCategoryBidirectionalStreamClient interface {
+	Send(*CreateCategoryRequest) error
+	Recv() (*Category, error)
+	grpc.ClientStream
+}
+
+type categoryServiceCreateCategoryBidirectionalStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *categoryServiceCreateCategoryBidirectionalStreamClient) Send(m *CreateCategoryRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *categoryServiceCreateCategoryBidirectionalStreamClient) Recv() (*Category, error) {
+	m := new(Category)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *categoryServiceClient) ListCategories(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListCategoriesResponse, error) {
@@ -77,6 +148,8 @@ func (c *categoryServiceClient) GetCategory(ctx context.Context, in *GetCategory
 // for forward compatibility
 type CategoryServiceServer interface {
 	CreateCategory(context.Context, *CreateCategoryRequest) (*Category, error)
+	CreateCategoryStream(CategoryService_CreateCategoryStreamServer) error
+	CreateCategoryBidirectionalStream(CategoryService_CreateCategoryBidirectionalStreamServer) error
 	ListCategories(context.Context, *emptypb.Empty) (*ListCategoriesResponse, error)
 	GetCategory(context.Context, *GetCategoryRequest) (*Category, error)
 	mustEmbedUnimplementedCategoryServiceServer()
@@ -88,6 +161,12 @@ type UnimplementedCategoryServiceServer struct {
 
 func (UnimplementedCategoryServiceServer) CreateCategory(context.Context, *CreateCategoryRequest) (*Category, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCategory not implemented")
+}
+func (UnimplementedCategoryServiceServer) CreateCategoryStream(CategoryService_CreateCategoryStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method CreateCategoryStream not implemented")
+}
+func (UnimplementedCategoryServiceServer) CreateCategoryBidirectionalStream(CategoryService_CreateCategoryBidirectionalStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method CreateCategoryBidirectionalStream not implemented")
 }
 func (UnimplementedCategoryServiceServer) ListCategories(context.Context, *emptypb.Empty) (*ListCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
@@ -124,6 +203,58 @@ func _CategoryService_CreateCategory_Handler(srv interface{}, ctx context.Contex
 		return srv.(CategoryServiceServer).CreateCategory(ctx, req.(*CreateCategoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _CategoryService_CreateCategoryStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CategoryServiceServer).CreateCategoryStream(&categoryServiceCreateCategoryStreamServer{ServerStream: stream})
+}
+
+type CategoryService_CreateCategoryStreamServer interface {
+	SendAndClose(*ListCategoriesResponse) error
+	Recv() (*CreateCategoryRequest, error)
+	grpc.ServerStream
+}
+
+type categoryServiceCreateCategoryStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *categoryServiceCreateCategoryStreamServer) SendAndClose(m *ListCategoriesResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *categoryServiceCreateCategoryStreamServer) Recv() (*CreateCategoryRequest, error) {
+	m := new(CreateCategoryRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _CategoryService_CreateCategoryBidirectionalStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CategoryServiceServer).CreateCategoryBidirectionalStream(&categoryServiceCreateCategoryBidirectionalStreamServer{ServerStream: stream})
+}
+
+type CategoryService_CreateCategoryBidirectionalStreamServer interface {
+	Send(*Category) error
+	Recv() (*CreateCategoryRequest, error)
+	grpc.ServerStream
+}
+
+type categoryServiceCreateCategoryBidirectionalStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *categoryServiceCreateCategoryBidirectionalStreamServer) Send(m *Category) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *categoryServiceCreateCategoryBidirectionalStreamServer) Recv() (*CreateCategoryRequest, error) {
+	m := new(CreateCategoryRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func _CategoryService_ListCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -182,6 +313,18 @@ var CategoryService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CategoryService_GetCategory_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "CreateCategoryStream",
+			Handler:       _CategoryService_CreateCategoryStream_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "CreateCategoryBidirectionalStream",
+			Handler:       _CategoryService_CreateCategoryBidirectionalStream_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "proto/category.proto",
 }
