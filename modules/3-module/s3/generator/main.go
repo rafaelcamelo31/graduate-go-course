@@ -8,7 +8,7 @@ import (
 func main() {
 	i := 0
 
-	for i < 10 {
+	for i < 1000 {
 		dir, err := os.Create(fmt.Sprintf("./tmp/file%d.txt", i))
 		if err != nil {
 			fmt.Println("Error creating file:", err)
@@ -21,7 +21,6 @@ func main() {
 			fmt.Println("Error writing to file:", err)
 			return
 		}
-
 		i++
 	}
 }

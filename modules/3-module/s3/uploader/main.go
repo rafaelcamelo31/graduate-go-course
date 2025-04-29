@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -18,6 +19,7 @@ import (
 var (
 	s3Client *s3.Client
 	s3Bucket string
+	wg       sync.WaitGroup
 )
 
 func init() {
@@ -40,25 +42,43 @@ func main() {
 	}
 	defer dir.Close()
 
+	uploadControl := make(chan struct{}, 100)
+	errorFileUpload := make(chan string, 10)
+
+	// Retry failed uploads
+	go func() {
+		for filename := range errorFileUpload {
+			uploadControl <- struct{}{}
+			wg.Add(1)
+			go uploadFile(filename, uploadControl, errorFileUpload)
+		}
+	}()
+
 	for {
 		files, err := dir.ReadDir(1)
 		if err != nil {
 			if err == io.EOF {
-				fmt.Println("No more files to read")
 				break
 			}
 			fmt.Printf("Error reading directory: %v\n", err)
 			continue
 		}
-		uploadFile(files[0].Name())
+		wg.Add(1)
+		uploadControl <- struct{}{}
+		go uploadFile(files[0].Name(), uploadControl, errorFileUpload)
 	}
+	wg.Wait()
 }
 
-func uploadFile(filename string) {
+func uploadFile(filename string, uploadControl <-chan struct{}, errorFileUpload chan<- string) {
+	defer wg.Done()
 	completeFileName := fmt.Sprintf("../tmp/%s", filename)
 	f, err := os.Open(completeFileName)
 	if err != nil {
 		fmt.Printf("Error opening file %s: %v\n", completeFileName, err)
+		// empty the channel
+		<-uploadControl
+		errorFileUpload <- filename
 		return
 	}
 	defer f.Close()
@@ -70,7 +90,10 @@ func uploadFile(filename string) {
 	})
 	if err != nil {
 		fmt.Printf("Error uploading file %s: %v\n", filename, err)
+		<-uploadControl
+		errorFileUpload <- filename
 		return
 	}
 	fmt.Printf("Successfully uploaded %s to %s\n", filename, s3Bucket)
+	<-uploadControl
 }
