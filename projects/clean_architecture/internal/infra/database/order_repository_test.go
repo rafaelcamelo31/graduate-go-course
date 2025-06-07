@@ -32,7 +32,7 @@ func TestSuite(t *testing.T) {
 }
 
 func (suite *OrderRepositoryTestSuite) TestGivenAnOrder_WhenSave_ThenShouldSaveOrder() {
-	order, err := entity.NewOrder("123", 10.0, 2.0)
+	order, err := entity.NewOrder(123, 10.0, 2.0)
 	suite.NoError(err)
 	suite.NoError(order.CalculateFinalPrice())
 	repo := NewOrderRepository(suite.Db)

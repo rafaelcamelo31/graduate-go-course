@@ -6,6 +6,9 @@ package graph
 
 import (
 	"context"
+	"strconv"
+
+	"fmt"
 
 	"github.com/rafaelcamelo31/graduate-go-course/4-module/clean_architecture/internal/dto"
 	"github.com/rafaelcamelo31/graduate-go-course/4-module/clean_architecture/internal/infra/graph/model"
@@ -13,8 +16,12 @@ import (
 
 // CreateOrder is the resolver for the createOrder field.
 func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderInput) (*model.Order, error) {
+	int64Id, err := strconv.ParseInt(input.ID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
 	dto := dto.OrderInputDTO{
-		ID:    input.ID,
+		ID:    int64Id,
 		Price: float64(input.Price),
 		Tax:   float64(input.Tax),
 	}
@@ -23,7 +30,7 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderIn
 		return nil, err
 	}
 	return &model.Order{
-		ID:         output.ID,
+		ID:         fmt.Sprint(output.ID),
 		Price:      float64(output.Price),
 		Tax:        float64(output.Tax),
 		FinalPrice: float64(output.FinalPrice),

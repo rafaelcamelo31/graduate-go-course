@@ -3,13 +3,13 @@ package entity
 import "errors"
 
 type Order struct {
-	ID         string
+	ID         int64
 	Price      float64
 	Tax        float64
 	FinalPrice float64
 }
 
-func NewOrder(id string, price float64, tax float64) (*Order, error) {
+func NewOrder(id int64, price float64, tax float64) (*Order, error) {
 	order := &Order{
 		ID:    id,
 		Price: price,
@@ -23,7 +23,7 @@ func NewOrder(id string, price float64, tax float64) (*Order, error) {
 }
 
 func (o *Order) IsValid() error {
-	if o.ID == "" {
+	if o.ID < 0 {
 		return errors.New("invalid id")
 	}
 	if o.Price <= 0 {

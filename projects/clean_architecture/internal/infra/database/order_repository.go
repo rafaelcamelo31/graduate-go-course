@@ -15,19 +15,21 @@ func NewOrderRepository(db *sql.DB) *OrderRepository {
 }
 
 func (r *OrderRepository) Save(order *entity.Order) error {
-	stmt, err := r.Db.Prepare("INSERT INTO orders (id, price, tax, final_price) VALUES (?, ?, ?, ?)")
+	stmt, err := r.Db.Prepare("INSERT INTO orders (price, tax, final_price) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Exec(order.ID, order.Price, order.Tax, order.FinalPrice)
+	result, err := stmt.Exec(&order.Price, &order.Tax, &order.FinalPrice)
 	if err != nil {
 		return err
 	}
+	id, err := result.LastInsertId()
+	order.ID = id
 	return nil
 }
 
 func (r *OrderRepository) FindAll() ([]entity.Order, error) {
-	rows, err := r.Db.Query("SELECT * FROM Orders")
+	rows, err := r.Db.Query("SELECT * FROM orders")
 	if err != nil {
 		return nil, err
 	}

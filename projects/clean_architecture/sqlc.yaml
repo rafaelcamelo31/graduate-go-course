@@ -1,0 +1,8 @@
+version: "2"
+sql:
+  - schema: "sql/migrations"
+    engine: "mysql"
+    gen:
+      go:
+        package: "db"
+        out: "internal/db"

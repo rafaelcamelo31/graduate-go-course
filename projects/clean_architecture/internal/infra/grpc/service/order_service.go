@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/rafaelcamelo31/graduate-go-course/4-module/clean_architecture/internal/dto"
 	"github.com/rafaelcamelo31/graduate-go-course/4-module/clean_architecture/internal/infra/grpc/pb"
@@ -20,8 +22,9 @@ func NewOrderService(createOrderUseCase usecase.CreateOrderUseCase) *OrderServic
 }
 
 func (s *OrderService) CreateOrder(ctx context.Context, in *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
+	int64Id, err := strconv.ParseInt(in.Id, 10, 64)
 	dto := dto.OrderInputDTO{
-		ID:    in.Id,
+		ID:    int64Id,
 		Price: float64(in.Price),
 		Tax:   float64(in.Tax),
 	}
@@ -30,7 +33,7 @@ func (s *OrderService) CreateOrder(ctx context.Context, in *pb.CreateOrderReques
 		return nil, err
 	}
 	return &pb.CreateOrderResponse{
-		Id:         output.ID,
+		Id:         fmt.Sprint(output.ID),
 		Price:      float32(output.Price),
 		Tax:        float32(output.Tax),
 		FinalPrice: float32(output.FinalPrice),
