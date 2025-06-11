@@ -13,7 +13,7 @@ type Order struct {
 }
 
 type OrderInput struct {
-	ID    string  `json:"id"`
+	ID    *string `json:"id,omitempty"`
 	Price float64 `json:"Price"`
 	Tax   float64 `json:"Tax"`
 }
