@@ -6,9 +6,8 @@ package graph
 
 import (
 	"context"
-	"strconv"
-
 	"fmt"
+	"strconv"
 
 	"github.com/rafaelcamelo31/graduate-go-course/4-module/clean_architecture/internal/dto"
 	"github.com/rafaelcamelo31/graduate-go-course/4-module/clean_architecture/internal/infra/graph/model"
@@ -37,7 +36,31 @@ func (r *mutationResolver) CreateOrder(ctx context.Context, input *model.OrderIn
 	}, nil
 }
 
+// Orders is the resolver for the orders field.
+func (r *queryResolver) Orders(ctx context.Context) ([]*model.Order, error) {
+	output, err := r.ListOrdersUseCase.Execute()
+	if err != nil {
+		return nil, err
+	}
+
+	orders := []*model.Order{}
+	for _, v := range output.Orders {
+		orders = append(orders, &model.Order{
+			ID:         fmt.Sprint(v.ID),
+			Price:      v.Price,
+			Tax:        v.Tax,
+			FinalPrice: v.FinalPrice,
+		})
+	}
+
+	return orders, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Query returns QueryResolver implementation.
+func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }

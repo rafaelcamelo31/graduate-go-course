@@ -1,3 +1,5 @@
+# go run github.com/99designs/gqlgen generate
+
 type Order {
   id: String!
   Price: Float!
@@ -9,6 +11,10 @@ input OrderInput {
   id: String!
   Price: Float!
   Tax: Float!
+}
+
+type Query {
+  orders: [Order!]!
 }
 
 type Mutation {
