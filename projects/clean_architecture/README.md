@@ -16,7 +16,7 @@ Use Docker for database creation and connection.
 
 # Testing
 
-- Run `docker compose up -d` to start up database container with seeds.
+- Run `docker compose up -d` to start up application and database container with seeds.
 - I used Postman for testing purpose:
 
 ### REST API
