@@ -1,0 +1,22 @@
+FROM golang:latest AS builder
+
+WORKDIR /app
+
+COPY . .
+
+# DWARF- Debugging with arbitrary format
+# Trade-off between binary generated with additional debuggin capability or not
+# Disable in production to reduce binary size
+
+# CGO_ENABLED=0
+# Golang is able to import C based libraries, 0 disables it
+# golang:latest has all the CGO dependencies, but scratch has no resources to make run go with C libraries
+# So you must disable it to be able to run go binary inside scratch
+RUN GOOS=linux CGO_ENABLED=0 go build -ldflags="-w -s" -o server .
+
+# Scratch has no dependency 
+FROM scratch
+
+COPY --from=builder /app/server .
+
+CMD [ "./server" ]
