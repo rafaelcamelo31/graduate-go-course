@@ -28,6 +28,7 @@ func main() {
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	// Wait for a termination signal to gracefully shut down the server
 	<-stop
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
