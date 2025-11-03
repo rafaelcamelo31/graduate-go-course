@@ -66,3 +66,42 @@
   - The process completes it execution or terminated forcefuly
   - Exit: Success after concluding instructions
   - Killed: Interruption by error execution or terminated by other process (such as command "kill")
+
+## Creating Process
+
+- UNIX/Linux
+
+  - fork()
+  - Clones current process
+  - Creates a child process
+  - fork() returns diffent value to the parent process (PID)
+  - Parent and child processes are identical. However, the values in memory are copied to the different address, separate and independent
+
+    ![pid example in C](pid.png)
+
+## Managing Process
+
+- Scheduler
+  - Decides which processe will be executed
+  - Alternate between processes
+  - Has several algorithms in attempt to maximize CPU use
+  - It selects processes from queue with "ready queue"
+  - Allocates CPU: Switch states, Ready to Running
+  - Frees CPU: I/O when not needed
+- Types of Schedulers
+  - Non-preemptive: The process in execution has control on when to free CPU for other process. It has a drawback of one process using CPU exclusively.
+  - Preemptive: The OS is capable to interrupt a process in execution and give CPU different process. It operates "fairly". Lots of "Context Switching".
+
+## Threads
+
+[Program vs Process vs Thread](https://bytebytego.com/guides/what-is-the-difference-between-process-and-thread/)
+
+- **Program** is an executable file containing a set of instructions. One program can have multiple processes.
+- **Process** is an instance of program in execution. When a program is loaded into the memory and becomes active, the program becomes a process.
+- **Thread** is the smallest unit of execution within a process.
+
+## Memory in Threads
+
+- Thread uses less memory than process.
+- Each thread has own stack independently and isolated.
+- Each thread (OS) uses 2MB. (Golang thread uses 2kb)
