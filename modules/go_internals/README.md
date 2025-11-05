@@ -105,3 +105,58 @@
 - Thread uses less memory than process.
 - Each thread has own stack independently and isolated.
 - Each thread (OS) uses 2MB. (Golang thread uses 2kb)
+
+## Runtime Architecture
+
+- Scheduler
+- Goroutines
+- Channels
+- Garbage Collector
+- Memory Allocation
+- Stack Management
+- Network Poller
+- Reflection
+
+## M:N Threading Model
+
+[Introducing M:N Hybrid Threading in Go: Unveiling the Power of Goroutines](https://medium.com/@rezauditore/introducing-m-n-hybrid-threading-in-go-unveiling-the-power-of-goroutines-8f2bd31abc84)
+
+- User-level vs kernel-level threads
+- Allows for a dynamic allocation of M user-level threads (goroutines) to N kernel-level threads.
+- Allows flexibility and efficiency to concurrent programming.
+
+## Goroutines
+
+- Functions or methods executed concurrently.
+- Threads managed by Go runtime.
+- Much cheaper than kernel threads (2kb).
+- Easier to create and destroy.
+- Has own stack. Shares same address of memory in Go program.
+
+## M:P:G Model
+
+[Revealing Golang’s Secret Sauce: A Deep Dive into Its Internals](https://meetsoni15.medium.com/unveiling-golangs-hidden-internals-discover-the-hidden-mechanics-that-optimize-performance-8f946f784041)
+
+![M:P:G](mpg.png)
+
+## runtime.GOMAXPROCS()
+
+[GOMAXPROCS](https://go.dev/blog/container-aware-gomaxprocs)
+
+- Go creates a P (Processor) per CPU cores.
+- Go tries to create a M (Machine -Threads) for each P.
+
+## Scheduler
+
+[Scheduler Structures](https://go.dev/src/runtime/HACKING)
+
+> The scheduler’s job is to match up a G (the code to execute), an M (where to execute it), and a P (the rights and resources to execute it). When an M stops executing user Go code, for example by entering a system call, it returns its P to the idle P pool. In order to resume executing user Go code, for example on return from a system call, it must acquire a P from the idle pool.
+
+- The scheduler in Go runtime:
+
+  - Manages task
+  - Load balancing
+  - Manages concurrencies
+
+- Go version >= 1.14 works in preemptive scheduler
+  - Which means Go is capable to allocate and deallocate processes depending on the situation
