@@ -160,3 +160,5 @@
 
 - Go version >= 1.14 works in preemptive scheduler
   - Which means Go is capable to allocate and deallocate processes depending on the situation
+
+<img src="scheduler.png" height="420">
