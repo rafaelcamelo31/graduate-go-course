@@ -162,3 +162,33 @@
   - Which means Go is capable to allocate and deallocate processes depending on the situation
 
 <img src="scheduler.png" height="420">
+
+## Memory Management
+
+- Fast access
+
+  - L1 - 64kb
+  - L2 - 0.5mb
+  - L3 - 8mb
+  - Used in CPU as a cache with same chip
+
+- Slow access
+  - RAM sticks, DDR - Double Data Rate. Clock can access twice per cicle
+  - Connected with memory bus (communication channel between CPU and memory)
+  - Memories are referenced in Hexadecimal format
+
+![memory management](memory_management.png)
+
+## Memory Access Cost
+
+### Memory management
+
+![memory access cost](metadata.png)
+
+### Stack
+
+![stack](stack.png)
+
+### Heap
+
+![heap](heap.png)
