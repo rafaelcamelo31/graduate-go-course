@@ -77,7 +77,7 @@
   - fork() returns diffent value to the parent process (PID)
   - Parent and child processes are identical. However, the values in memory are copied to the different address, separate and independent
 
-    ![pid example in C](pid.png)
+<img src="image/pid.png" height="300">
 
 ## Managing Process
 
@@ -137,7 +137,7 @@
 
 [Revealing Golang’s Secret Sauce: A Deep Dive into Its Internals](https://meetsoni15.medium.com/unveiling-golangs-hidden-internals-discover-the-hidden-mechanics-that-optimize-performance-8f946f784041)
 
-![M:P:G](mpg.png)
+<img src="image/mpg.png" height="300">
 
 ## runtime.GOMAXPROCS()
 
@@ -161,7 +161,7 @@
 - Go version >= 1.14 works in preemptive scheduler
   - Which means Go is capable to allocate and deallocate processes depending on the situation
 
-<img src="scheduler.png" height="420">
+<img src="image/scheduler.png" height="420">
 
 ## Memory Management
 
@@ -177,18 +177,43 @@
   - Connected with memory bus (communication channel between CPU and memory)
   - Memories are referenced in Hexadecimal format
 
-![memory management](memory_management.png)
+<img src="image/memory_management.png" height="300">
 
 ## Memory Access Cost
 
 ### Memory management
 
-![memory access cost](metadata.png)
+<img src="image/metadata.png" height="300">
 
 ### Stack
 
-![stack](stack.png)
+<img src="image/stack.png" height="300">
 
 ### Heap
 
-![heap](heap.png)
+<img src="image/heap.png" height="300">
+
+## Memory Fragmentation
+
+Strategy to avoid ineffienct memory management
+
+- Memory Arenas
+
+<img src="image/memory_arenas.png" height="300">
+
+- Memory Allocations
+
+  - malloc(C std library)
+  - dlmalloc(Doug Lea's Malloc) - Doesn't support multithreading efficiently
+  - ptmalloc/ptmalloc2 (pthreads Malloc) - First memory arenas appearence
+  - jemalloc (Jason Evans) - Facebook, Rust, Postgres
+  - TCMalloc (Thread-Caching Malloc) - Google
+
+## Memory Allocation in Go
+
+[A visual guide to Go memory allocator](https://medium.com/@ankur_anand/a-visual-guide-to-golang-memory-allocator-from-ground-up-e132258453ed)
+
+- mallocgc
+
+  <img src="image/span.png" height="150">
+  <img src="image/mcentral_mcache.png" height="300">
