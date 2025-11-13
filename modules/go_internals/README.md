@@ -217,3 +217,11 @@ Strategy to avoid ineffienct memory management
 
   <img src="image/span.png" height="150">
   <img src="image/mcentral_mcache.png" height="300">
+
+## Grabage Collector in Go
+
+- non-generational and concurrent Tri-Color Mark-and-Sweep algorithm
+- The objective of Garbage Collector is to identify and reclaim memory occupied by objects that are no longer reachable or "live"
+- Identifies traversing the object graph starting from "root" references (e.g., local variables)
+- Iterates through the memory and reclaim the spaces from unreachable objects
+- Defragment memory
