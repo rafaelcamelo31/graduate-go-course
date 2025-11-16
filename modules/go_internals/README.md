@@ -254,3 +254,30 @@ Strategy to avoid ineffienct memory management
 - If the GOGC is 100 and the heap is allocated 100Mb, Garbage Collector is itiniated after 100Mb + (100Mb \* 1) = 200Mb
 - Higher GOGC leads to less frequent GC activation (more memory usage is allowed, but potentially longer pause)
 - Less GOGC leads to more frequent GC activation and shorter pauses.
+
+## Garbage Collector Trace
+
+- Clock Time
+
+  - Total time to execute everything GC related
+
+- CPU Time
+  - Time CPU is actively working on garbage collection, excluding pause and other goroutines executions
+
+## Channels
+
+- A mecanism to allow Golang to synchronize and work with concurrent process securely.
+
+### Deadlocks
+
+  <img src="image/channels.png" height="250">
+
+### Why Channels?
+
+<img src="image/why_channels.png" height="300">
+
+<img src="image/when_to_use_channels.png" height="200" width="600">
+
+### Channels and their types
+
+<img src="image/channels_types.png" height="200" width="600">
