@@ -225,3 +225,32 @@ Strategy to avoid ineffienct memory management
 - Identifies traversing the object graph starting from "root" references (e.g., local variables)
 - Iterates through the memory and reclaim the spaces from unreachable objects
 - Defragment memory
+
+## Garbage Collector in Action
+
+- Tri-Color
+  - White (object unreachable)
+  - Gray (object reference marking in process)
+  - Black (object is in use, has references)
+
+1. STW (Stop The World)
+   1.1 Mark setup
+2. Marking Work (Concurrent)
+   2.1 25% of CPU usage
+   2.2 Mark Assist
+   2.2.1 Scans objects from gray, then for each gray object scanned, it inspects all of its references
+   2.2.2 Any children that are marked becomes gray, and its original object becomes black
+3. Mark Termination
+   3.1 Marking is done
+   3.2 Write barrier is off
+4. Sweeping (Concurrent)
+   4.1 All white objects with no reference is marked as garbage
+   4.2 There are on-demand GC cycle as well
+
+## GOGC in Percentage
+
+- GOGC is an environment variable to determine when does the next GC will run.
+- Default is 100%
+- If the GOGC is 100 and the heap is allocated 100Mb, Garbage Collector is itiniated after 100Mb + (100Mb \* 1) = 200Mb
+- Higher GOGC leads to less frequent GC activation (more memory usage is allowed, but potentially longer pause)
+- Less GOGC leads to more frequent GC activation and shorter pauses.
