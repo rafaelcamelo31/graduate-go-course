@@ -310,3 +310,71 @@ type hchan struct {
 ### Channels Workflow
 
 <img src="image/channels_workflow.png" height="300">
+
+## Buffered Channels
+
+<div>
+  <p style="font-weight: 1000">
+    High Thoroughput
+  </p>
+  <img src="image/high_throughput.png" height="150">
+
+  <p style="font-weight: 1000">
+    Data Pipeline
+  </p>
+  <img src="image/data_pipeline.png" height="160">
+
+  <p style="font-weight: 1000">
+    Async Operation
+  </p>
+  <img src="image/async_operation.png" height="160">
+
+  <p style="font-weight: 1000">
+    Multiple Groutines
+  </p>
+  <img src="image/multiple_goroutines.png" height="130">
+
+  <p style="font-weight: 1000">
+    I/O
+  </p>
+  <img src="image/io.png" height="130">
+
+  <p style="font-weight: 1000">
+    Summary
+  </p>
+  <img src="image/summary.png" height="130">
+</div>
+
+## Non-Buffered Channels
+
+<div>
+  <p style="font-weight: 1000">
+    Synchronous Operation
+  </p>
+  <img src="image/sync_process.png" height="270">
+
+  <p style="font-weight: 1000">
+    Handshake
+  </p>
+  <img src="image/handshake.png" height="270">
+
+  <p style="font-weight: 1000">
+    Timed Events
+  </p>
+  <img src="image/timed_events.png" height="250">
+
+  <p style="font-weight: 1000">
+    Workers
+  </p>
+  <img src="image/workers.png" height="250">
+</div>
+
+## Size of Buffer in Channels
+
+- It depends on several factors:
+  - Data processing and consumption
+  - Requirements for latency and performance
+  - Available memories
+  - Specific needs of your pipeline for data processing
+
+Lastly, must be monitored and adjusted accordingly, using load test and performance test during development to find ideal buffer size.
