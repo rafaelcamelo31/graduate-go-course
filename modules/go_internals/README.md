@@ -378,3 +378,43 @@ type hchan struct {
   - Specific needs of your pipeline for data processing
 
 Lastly, must be monitored and adjusted accordingly, using load test and performance test during development to find ideal buffer size.
+
+## Stack Management
+
+- Well known data structure with LIFO (Last Int, First Out)
+- Stores local variables and control flows, such as referenced address
+
+- Local variables
+- Function parameters
+- Address of returning value
+- Scope and lifetime of variables and/or objects
+
+### Stack in Go
+
+- Is segmented
+
+  - Efficient memory management and performance (increase/decrease in size)
+  - Initialize with 2kb
+  - Runtime verifies necessity for additional space during goroutine execution
+  - Copies previous stack and allocates to new stack segment with new pointer
+
+- Decreasing in size
+
+  - The runtime can free unused segments to decrease its size
+
+- Guard Pages and Stackoverflow
+  - Guard Pages is used to protect from access outside of stack limit, preventing segmentation faults
+  - Verifies stack limit to not oversize, preventing stackoverflow
+
+## Escape Analysis
+
+- The Compiler decides if the object should go to stack or heap
+- If the variable could out live function scope where it was created, then it's moved to the heap
+- To see if variable was escaped, run go build -gcflags="-m" main.go
+
+- Returns a pointer
+  - If the function returns a pointer to a local variable, it is allocated to the heap, because pointer can be used outside of function's scope
+- Storing in data structure
+  - If the local variable is stored in data structure which outlives the scope of function, it is allocated in heap
+- Goroutines
+  - If the local variable is used inside goroutine, it is allocated in heap. Because goroutine can keep running after the function's return.
