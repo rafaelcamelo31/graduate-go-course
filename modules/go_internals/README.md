@@ -410,7 +410,7 @@ Lastly, must be monitored and adjusted accordingly, using load test and performa
 
 - The Compiler decides if the object should go to stack or heap
 - If the variable could out live function scope where it was created, then it's moved to the heap
-- To see if variable was escaped, run go build -gcflags="-m" main.go
+- To see if variable was escaped, `run go build -gcflags="-m" main.go`
 
 - Returns a pointer
   - If the function returns a pointer to a local variable, it is allocated to the heap, because pointer can be used outside of function's scope
@@ -418,3 +418,76 @@ Lastly, must be monitored and adjusted accordingly, using load test and performa
   - If the local variable is stored in data structure which outlives the scope of function, it is allocated in heap
 - Goroutines
   - If the local variable is used inside goroutine, it is allocated in heap. Because goroutine can keep running after the function's return.
+
+## Network Poller
+
+### File Descriptor (FD)
+
+- Identifier which OS uses to access files, sockets or other I/O resources
+- FDs are integer value associated with I/O resources to run operations such as read, write and monitor events
+
+- Types of FDs:
+
+  - Files
+  - Sockets
+  - Pipes
+  - Hardware
+
+- Special FDs:
+  - 0: stdin(standard input: keyboard)
+  - 1: stdout(standard output: monitor)
+  - 2: stderr(standard error: error message)
+
+<img src="image/file_descriptor.png" height="300">
+
+## File Descriptor Status
+
+- Readbale: Ready to read. Data available to be read. (EPOLLIN)
+- Writeable: Ready to receive data and write without blocking (EPOLLOUT)
+- Error: Error in File Descriptor. Closed or invalid. Application needs to remove FD from poll. (EPOLLERR)
+- Hang-up: The connection closed or hang-up unexpectedly in FD. (EPOLLHUP)
+- Priority Read: High priority data are ready to be read. (EPOLLPRI)
+- Edge-Triggered: Status update notification on FD. (EPOLLET)
+
+## I/O Multiplexing
+
+- Monitors multiple FDs simultaniously, looking for which FD is ready for input or output, without blocking the process.
+- Allows a process to execute other tasks or stay ready until one or more FDs are ready to be processed.
+- One process is able to monitor and interact with multiple I/O without needing multiple threads or processes.
+- Prevents from process to get blocked while it waits for a FD, allowing it to deal with multiple FDs at the same time.
+- Ideal for concurrent applications with several simultanious connections like network server and distributed systems.
+
+## Types of I/O Multiplexing
+
+- select and poll
+- epoll (linux)
+- kqueue (Mac/BSD)
+- IOCP (Windows)
+
+## Network Poller in Golang
+
+- Responsible for monitoring and managing events from asynchronous I/O (read or write from network data)
+- Non-blocking: Goroutine does not stop execution while it waits for the result.
+  - Network Poller monitors readdines of operations
+- The goroutine with I/O process can be suspended while the poller monitors - no CPU usage
+- I/O Multiplexing
+
+## Epoll in Linux with Golang
+
+- An I/O Multiplexing mecanism introduced in Linux kernel
+- Used to monitor multiple File Descriptors (FDs), allowing OS to notify programs when FDs are ready for read or write
+- Allows the application to be notified, when FD is ready for I/O without consulting constantly (busy-waiting)
+- Reduces CPU usage. Epoll can block until I/O event occurs, instead of polling all the time
+- Supports high throughput of I/O in applications with thousands of simultanious connections
+- Used in:
+  - Networking (web servers)
+  - Asynchronous service (messaging systems, data bases)
+  - Low latency application (high efficiency to process I/O events)
+
+<img src="image/app_epoll_fd_work.png" height="300">
+<img src="image/creating_epoll_go.png" height="300">
+
+## Webserver Example
+
+<img src="image/webserver.png" height="270">
+<img src="image/webserver2.png" height="270">
