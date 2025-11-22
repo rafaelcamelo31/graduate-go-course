@@ -1,6 +1,6 @@
 package entity
 
-type WeatherAPI struct {
+type Weather struct {
 	Current Current `json:"current"`
 }
 
@@ -9,6 +9,6 @@ type Current struct {
 	Tempf float32 `json:"temp_f"`
 }
 
-func NewWeatherAPI() *WeatherAPI {
-	return &WeatherAPI{}
+func NewWeather() *Weather {
+	return &Weather{}
 }
