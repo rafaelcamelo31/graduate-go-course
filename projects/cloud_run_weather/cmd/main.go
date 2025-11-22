@@ -18,7 +18,7 @@ func main() {
 	cfg := &config.WeatherConfig{}
 	cfg.LoadConfig()
 
-	viacepAdapter := adapter.NewHttpViaCEPAdapter(httpClient)
+	viacepAdapter := adapter.NewHttpViaCepAdapter(httpClient)
 	weatherAdapter := adapter.NewHttpWeatherApiAdapter(httpClient, cfg.ApiKey)
 
 	h := handler.NewHandler(viacepAdapter, weatherAdapter, cfg)

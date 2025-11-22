@@ -1,11 +1,11 @@
 package apierror
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 )
 
 func GetInternalServerError(w http.ResponseWriter, err error) {
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-	log.Println(http.StatusText(http.StatusInternalServerError), err)
+	slog.Error(http.StatusText(http.StatusInternalServerError), slog.Any("error", err))
 }

@@ -49,14 +49,22 @@ func (h *Handler) GetTemperature(w http.ResponseWriter, r *http.Request) {
 		apierror.GetInternalServerError(w, err)
 		return
 	}
-
 	if city == nil {
 		http.Error(w, constant.CANNOT_FIND_CEP, http.StatusNotFound)
-		slog.Error("city not found for CEP", "cep", cep, "status", http.StatusNotFound)
+		slog.Error(constant.CANNOT_FIND_CEP, "cep", cep, "status", http.StatusNotFound)
 		return
 	}
 
-	weather, _ := h.weatherAdapter.GetWeather(ctx, city.Name)
+	weather, err := h.weatherAdapter.GetWeather(ctx, city.Name)
+	if err != nil {
+		apierror.GetInternalServerError(w, err)
+		return
+	}
+	if weather == nil {
+		http.Error(w, constant.CANNOT_FIND_WEATHER, http.StatusNotFound)
+		slog.Error(constant.CANNOT_FIND_WEATHER, "weather", weather, "status", http.StatusNotFound)
+		return
+	}
 
 	t := entity.NewTemperature(weather.Current.TempC, weather.Current.Tempf)
 	slog.Info("Temperature in", "city", city, "temperature", fmt.Sprintf("%.1fC", weather.Current.TempC))

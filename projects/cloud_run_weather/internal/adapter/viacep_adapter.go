@@ -22,7 +22,7 @@ type HttpViaCEPAdapter struct {
 	URL    string
 }
 
-func NewHttpViaCEPAdapter(client *http.Client) *HttpViaCEPAdapter {
+func NewHttpViaCepAdapter(client *http.Client) *HttpViaCEPAdapter {
 	return &HttpViaCEPAdapter{
 		client: client,
 		URL:    "https://viacep.com.br/ws/",

@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/rafaelcaemlo31/graduate-go-course/projects/cloud_run_weather/internal/entity"
 )
@@ -38,23 +39,29 @@ func (ha *HttpWeatherApiAdapter) GetWeather(ctx context.Context, city string) (*
 
 	req, err := http.NewRequestWithContext(ctx, "GET", ha.URL+"?"+params.Encode(), nil)
 	if err != nil {
+		slog.Error("error in weather api request", "error", err, "request", req)
 		return nil, err
 	}
 
 	resp, err := ha.client.Do(req)
 	if err != nil {
+		slog.Error("error in weather api response", "error", err, "response", resp)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		slog.Error("WeatherAPI returned status", "code", resp.StatusCode, "body", string(body))
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		slog.Error("error reading body", "error", err, "body", string(body))
 		return nil, err
+	}
+	if strings.Contains(string(body), "error") {
+		slog.Error("no matching location found", )
+		return nil, nil
 	}
 
 	wapi := *entity.NewWeather()
-	err = json.NewDecoder(resp.Body).Decode(&wapi)
+	err = json.Unmarshal(body, &wapi)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 package entity
 
 type Weather struct {
-	Current Current `json:"current"`
+	Current *Current `json:"current"`
 }
 
 type Current struct {
