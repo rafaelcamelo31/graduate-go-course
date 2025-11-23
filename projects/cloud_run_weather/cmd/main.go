@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/rafaelcaemlo31/graduate-go-course/projects/cloud_run_weather/config"
@@ -24,6 +25,7 @@ func main() {
 	h := handler.NewHandler(viacepAdapter, weatherAdapter, cfg)
 	http.HandleFunc("GET /api/temperature", h.GetTemperature)
 
-	log.Println("Starting server on :8080")
-	http.ListenAndServe(":8080", nil)
+	port := os.Getenv("PORT")
+	log.Printf("Starting server on %s", port)
+	http.ListenAndServe(":"+port, nil)
 }
