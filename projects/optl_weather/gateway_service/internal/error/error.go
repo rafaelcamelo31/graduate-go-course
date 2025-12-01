@@ -14,3 +14,8 @@ func InternalServerError(w http.ResponseWriter) {
 	slog.Error(http.StatusText(http.StatusInternalServerError), "status", http.StatusInternalServerError)
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
+
+func BadRequestError(w http.ResponseWriter) {
+	slog.Error(http.StatusText(http.StatusBadRequest), "status", http.StatusBadRequest)
+	http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+}

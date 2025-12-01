@@ -12,8 +12,12 @@ import (
 )
 
 func TemperatureHandler(w http.ResponseWriter, r *http.Request) {
-	cep := r.URL.Query().Get("cep")
-	city := entity.NewCity(cep)
+	city := &entity.City{}
+	err := json.NewDecoder(r.Body).Decode(city)
+	if err != nil {
+		apierror.BadRequestError(w)
+		return
+	}
 
 	if !city.IsAllDigits() || !city.IsEightDigits() {
 		apierror.InvalidCepError(w)
@@ -23,6 +27,7 @@ func TemperatureHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
 	defer cancel()
 
+	cep := city.Cep
 	temp, err := adapter.GetTemperatureAdapter(ctx, cep)
 	if err != nil {
 		apierror.InternalServerError(w)

@@ -14,13 +14,14 @@ import (
 func GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature, error) {
 	u := &url.URL{
 		Scheme: "http",
-		Host:   "temperature_service",
+		Host:   "localhost:8081",
 		Path:   "/api/temperature",
 	}
 	q := u.Query()
 	q.Add("cep", cep)
+	u.RawQuery = q.Encode()
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, q.Encode(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		slog.Error("error in creating temperature service request", "error", err)
 		return nil, err
@@ -31,7 +32,7 @@ func GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature
 		slog.Error("error in sending temperature service request", "error", err)
 		return nil, err
 	}
-	resp.Body.Close()
+	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

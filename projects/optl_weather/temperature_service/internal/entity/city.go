@@ -4,7 +4,7 @@ import "unicode"
 
 type City struct {
 	Cep  string `json:"cep"`
-	Name string `json:"name"`
+	Name string `json:"localidade"`
 }
 
 func NewCity(cep string) *City {
