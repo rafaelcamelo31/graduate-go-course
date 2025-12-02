@@ -66,7 +66,7 @@ func (h *Handler) GetTemperature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t := entity.NewTemperature(weather.Current.TempC, weather.Current.Tempf)
+	t := entity.NewTemperature(weather.Current.TempC, weather.Current.Tempf, city.Name)
 	slog.Info("Temperature in", "city", city, "temperature", fmt.Sprintf("%.1fC", weather.Current.TempC))
 
 	w.Header().Set("Content-Type", "application/json")

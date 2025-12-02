@@ -1,7 +1,12 @@
 package entity
 
 type Weather struct {
-	Current *Current `json:"current"`
+	Current  *Current  `json:"current"`
+	Location *Location `json:"location"`
+}
+
+type Location struct {
+	Name string `json:"name"`
 }
 
 type Current struct {
