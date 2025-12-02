@@ -32,6 +32,10 @@ func GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature
 		slog.Error("error in sending temperature service request", "error", err)
 		return nil, err
 	}
+	if resp.StatusCode == http.StatusNotFound {
+		slog.Error(http.StatusText(http.StatusNotFound), "status", http.StatusNotFound)
+		return nil, nil
+	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)

@@ -33,6 +33,10 @@ func TemperatureHandler(w http.ResponseWriter, r *http.Request) {
 		apierror.InternalServerError(w)
 		return
 	}
+	if temp == nil {
+		apierror.NotFoundError(w)
+		return
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

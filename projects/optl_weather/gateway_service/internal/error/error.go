@@ -19,3 +19,8 @@ func BadRequestError(w http.ResponseWriter) {
 	slog.Error(http.StatusText(http.StatusBadRequest), "status", http.StatusBadRequest)
 	http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 }
+
+func NotFoundError(w http.ResponseWriter) {
+	slog.Error(http.StatusText(http.StatusNotFound), "status", http.StatusNotFound)
+	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+}
