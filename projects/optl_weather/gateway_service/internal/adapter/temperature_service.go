@@ -14,7 +14,7 @@ import (
 func GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature, error) {
 	u := &url.URL{
 		Scheme: "http",
-		Host:   "localhost:8081",
+		Host:   "temperature-api:8081",
 		Path:   "/api/temperature",
 	}
 	q := u.Query()

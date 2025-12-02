@@ -1,0 +1,16 @@
+services:
+  gateway-api:
+    build:
+      context: ./gateway_service/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: on-failure
+
+  temperature-api:
+    build:
+      context: ./temperature_service/
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    restart: on-failure
