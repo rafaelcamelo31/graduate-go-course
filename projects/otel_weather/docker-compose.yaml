@@ -9,14 +9,15 @@ services:
 
   temperature-api:
     build:
-      context: ./temperature_service/
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: temperature_service/Dockerfile
     ports:
       - "8081:8081"
     restart: on-failure
 
   zipkin:
     image: ghcr.io/openzipkin/zipkin-slim:${TAG:-latest}
+    restart: always
     container_name: zipkin
     environment:
       - STORAGE_TYPE=mem
