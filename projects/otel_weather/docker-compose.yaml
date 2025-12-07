@@ -1,8 +1,8 @@
 services:
   gateway-api:
     build:
-      context: ./gateway_service/
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: gateway_service/Dockerfile
     ports:
       - "8080:8080"
     restart: on-failure
