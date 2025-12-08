@@ -24,3 +24,21 @@ There are two services:
 - Use:
   - OTEL
   - Zipkin
+
+## How to Test
+
+**_Run containers_**
+
+```sh
+$ docker compose up --build -d
+```
+
+**_*Execute endpoint `http://localhost:8080/api/temperature`*_**
+
+**_Example:_**
+
+<img src="image/postman.png" height="400">
+
+**_Check Zipkin for traces between services in `http://localhost:9411`_**
+
+<img src="image/zipkin.png" height="400">

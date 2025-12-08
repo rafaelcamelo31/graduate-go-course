@@ -6,12 +6,24 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/gateway_service/internal/adapter"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/gateway_service/internal/entity"
-	apierror "github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/gateway_service/internal/error"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/gateway_service/internal/adapter"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/gateway_service/internal/entity"
+	apierror "github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/gateway_service/internal/error"
 )
 
-func TemperatureHandler(w http.ResponseWriter, r *http.Request) {
+type Handler struct {
+	temperature adapter.TemperatureServiceInterface
+}
+
+func NewHandler(temperature adapter.TemperatureServiceInterface) *Handler {
+	return &Handler{
+		temperature: temperature,
+	}
+}
+
+func (h *Handler) TemperatureHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	city := &entity.City{}
 	err := json.NewDecoder(r.Body).Decode(city)
 	if err != nil {
@@ -24,11 +36,11 @@ func TemperatureHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	cep := city.Cep
-	temp, err := adapter.GetTemperatureAdapter(ctx, cep)
+	temp, err := h.temperature.GetTemperatureAdapter(ctx, cep)
 	if err != nil {
 		apierror.InternalServerError(w)
 		return

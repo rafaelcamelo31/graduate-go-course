@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/config"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/constant"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/internal/entity"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/config"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/constant"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/internal/entity"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )

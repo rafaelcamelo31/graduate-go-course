@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/config"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/constant"
-	apierror "github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/error"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/internal/adapter"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/internal/entity"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/config"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/constant"
+	apierror "github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/error"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/internal/adapter"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/internal/entity"
 )
 
 type Handler struct {
@@ -29,8 +29,8 @@ func NewHandler(viacepAdapter adapter.ViaCepAdapterInterface, weatherAdapter ada
 
 func (h *Handler) GetTemperature(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	cep := r.URL.Query().Get("cep")
 
+	cep := r.URL.Query().Get("cep")
 	if cep == "" {
 		http.Error(w, constant.MISSING_CEP_QUERY, http.StatusBadRequest)
 		slog.Error(constant.MISSING_CEP_QUERY, "code", http.StatusBadRequest)

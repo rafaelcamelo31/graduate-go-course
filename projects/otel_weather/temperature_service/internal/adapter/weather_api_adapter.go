@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/temperature_service/internal/entity"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/temperature_service/internal/entity"
 )
 
 type WeatherApiAdapterInterface interface {

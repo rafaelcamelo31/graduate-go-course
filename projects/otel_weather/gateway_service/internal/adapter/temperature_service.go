@@ -8,10 +8,26 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/rafaelcamelo31/graduate-go-course/projects/optl_weather/gateway_service/internal/entity"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/otel_weather/gateway_service/internal/entity"
 )
 
-func GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature, error) {
+type TemperatureServiceInterface interface {
+	GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature, error)
+}
+
+var _ TemperatureServiceInterface = (*HttpTemperatureServiceAdapter)(nil)
+
+type HttpTemperatureServiceAdapter struct {
+	client *http.Client
+}
+
+func NewHttpTemperatureServiceAdapter(client *http.Client) *HttpTemperatureServiceAdapter {
+	return &HttpTemperatureServiceAdapter{
+		client: client,
+	}
+}
+
+func (ht *HttpTemperatureServiceAdapter) GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature, error) {
 	u := &url.URL{
 		Scheme: "http",
 		Host:   "temperature-api:8081",
@@ -27,7 +43,7 @@ func GetTemperatureAdapter(ctx context.Context, cep string) (*entity.Temperature
 		return nil, err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := ht.client.Do(req)
 	if err != nil {
 		slog.Error("error in sending temperature service request", "error", err)
 		return nil, err
