@@ -36,3 +36,8 @@ func Error(message string, err error, tags ...zap.Field) {
 	log.Error(message, tags...)
 	log.Sync()
 }
+
+func Warn(message string, tags ...zap.Field) {
+	log.Warn(message, tags...)
+	log.Sync()
+}
