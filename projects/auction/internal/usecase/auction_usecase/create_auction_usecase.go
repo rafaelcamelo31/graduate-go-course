@@ -37,6 +37,7 @@ func NewAuctionUseCase(
 	bidRepositoryInterface bid_entity.BidEntityRepository) AuctionUseCaseInterface {
 	return &AuctionUseCase{
 		auctionRepositoryInterface: auctionRepositoryInterface,
+		bidRepositoryInterface:     bidRepositoryInterface,
 	}
 }
 
