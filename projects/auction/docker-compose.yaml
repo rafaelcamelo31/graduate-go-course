@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - cmd/.env
+    command: sh -c "/auction"
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    env_file:
+      - cmd/.env
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+    driver: local

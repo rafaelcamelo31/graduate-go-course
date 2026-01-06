@@ -40,13 +40,11 @@ func (ar *AuctionRepository) CreateAuction(
 	auctionEntity *auction_entity.Auction) *internal_error.InternalError {
 	logger.Info("Starting auction creation", zap.String("auctionId", auctionEntity.Id))
 
-	// Valida os campos obrigatórios
 	if auctionEntity.ProductName == "" || auctionEntity.Category == "" {
 		logger.Warn("Validation failed: missing product name or category")
 		return internal_error.NewBadRequestError("Product name and category are required")
 	}
 
-	// Cria o documento MongoDB
 	auctionEntityMongo := &AuctionEntityMongo{
 		Id:          auctionEntity.Id,
 		ProductName: auctionEntity.ProductName,
@@ -64,7 +62,6 @@ func (ar *AuctionRepository) CreateAuction(
 
 	logger.Info("Auction successfully created, starting close routine", zap.String("auctionId", auctionEntity.Id))
 
-	// Inicia a goroutine para fechamento automático
 	go CloseAuctionRoutine(ctx, auctionEntity.Timestamp.Add(getAuctionDuration()), auctionEntity.Id, ar)
 
 	return nil

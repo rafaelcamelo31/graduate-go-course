@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -22,7 +23,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	if err := godotenv.Load(".env"); err != nil {
+	if err := godotenv.Load(filepath.Join("cmd", ".env")); err != nil {
 		log.Fatal("Error trying to load env variables")
 		return
 	}

@@ -2,7 +2,6 @@ package auction_controller
 
 import (
 	"context"
-
 	"net/http"
 
 	"github.com/gin-gonic/gin"

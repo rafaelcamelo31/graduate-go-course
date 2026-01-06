@@ -41,8 +41,10 @@ func (repo *AuctionRepository) FindAuctions(
 	productName string) ([]auction_entity.Auction, *internal_error.InternalError) {
 	filter := bson.M{}
 
-	if status != 0 {
-		filter["status"] = status
+	if status == 0 {
+		filter["status"] = 0
+	} else {
+		filter["status"] = 1
 	}
 
 	if category != "" {
