@@ -1,22 +1,31 @@
 package controller
 
 import (
-	"context"
+	"encoding/json"
 	"net/http"
-
-	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/usecase"
 )
 
-type HealthCheckController struct {
-	healthCheckUseCase usecase.HealthCheckUseCaseInterface
+type HealthCheckController struct{}
+
+func NewHealthCheckController() *HealthCheckController {
+	return &HealthCheckController{}
 }
 
-func NewHealthCheckController(healthCheckUseCase usecase.HealthCheckUseCaseInterface) *HealthCheckController {
-	return &HealthCheckController{
-		healthCheckUseCase: healthCheckUseCase,
-	}
+type Response struct {
+	Message string
+	Status  int
 }
 
 func (hc *HealthCheckController) GetHealthCheck(w http.ResponseWriter, r *http.Request) {
-	hc.healthCheckUseCase.GetHealthCheck(context.Background(), w, r)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	response := Response{
+		Message: "Server responded with success.",
+		Status:  http.StatusOK,
+	}
+
+	err := json.NewEncoder(w).Encode(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

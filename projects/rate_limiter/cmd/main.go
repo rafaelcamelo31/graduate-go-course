@@ -6,9 +6,11 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/config"
 	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/controller"
+	core_usecase "github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/core/usecase"
 	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/middleware"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/usecase"
+	repository "github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/repository/redis"
 )
 
 const (
@@ -21,13 +23,18 @@ func main() {
 		log.Fatal("Error trying to load env variables")
 		return
 	}
+	addr := os.Getenv(APP_HOST) + ":" + os.Getenv(APP_PORT)
 
-	useCase := usecase.NewHealthCheckUseCase()
-	c := controller.NewHealthCheckController(useCase)
+	redisClient := config.NewRedisClient()
+
+	repo := repository.NewRedisRepository(redisClient)
+	usecase := core_usecase.NewRateLimiterUseCase(repo)
+	c := controller.NewHealthCheckController()
 
 	mux := http.NewServeMux()
 	mux.Handle("GET /api/health", http.HandlerFunc(c.GetHealthCheck))
 
 	log.Println("Starting server at:", os.Getenv(APP_PORT))
-	http.ListenAndServe(os.Getenv(APP_HOST)+":"+os.Getenv(APP_PORT), middleware.RateLimiterMiddleware(mux))
+
+	http.ListenAndServe(addr, middleware.RateLimiterMiddleware(mux, usecase))
 }

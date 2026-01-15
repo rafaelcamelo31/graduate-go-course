@@ -15,14 +15,15 @@ const (
 )
 
 func NewRedisClient() *redis.Client {
-	redisDb, err := strconv.Atoi(os.Getenv(REDIS_DB))
+	db, err := strconv.Atoi(os.Getenv(REDIS_DB))
 	if err != nil {
 		log.Fatalln("redis client init error.", err)
 	}
+	address := os.Getenv(REDIS_HOST) + ":" + os.Getenv(REDIS_PORT)
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr: os.Getenv(REDIS_HOST) + ":" + os.Getenv(REDIS_PORT),
-		DB:   redisDb,
+		Addr: address,
+		DB:   db,
 	})
 
 	return rdb
