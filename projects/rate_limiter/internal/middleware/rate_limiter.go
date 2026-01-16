@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"encoding/json"
 	"log/slog"
 	"net"
 	"net/http"
@@ -9,16 +10,18 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/controller"
 	core_entity "github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/core/entity"
 	core_usecase "github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/core/usecase"
 )
 
 const (
-	API_KEY        = "API_KEY"
-	IP             = "IP"
-	MAX_REQUEST    = "_MAX_REQUEST"
-	WINDOW         = "_WINDOW"
-	BLOCK_DURATION = "_BLOCK_DURATION"
+	API_KEY          = "API_KEY"
+	IP               = "IP"
+	MAX_REQUEST      = "_MAX_REQUEST"
+	WINDOW           = "_WINDOW"
+	BLOCK_DURATION   = "_BLOCK_DURATION"
+	TOO_MANY_REQUEST = "you have reached the maximum number of requests or actions allowed within a certain time frame"
 )
 
 type Middleware struct {
@@ -59,9 +62,17 @@ func RateLimiterMiddleware(next http.Handler, usecase core_usecase.RateLimiterIn
 
 		ctx := context.Background()
 		if requestApiKey == envApiKey {
-			usecase.Allow(ctx, requestApiKey, apiKeyLimiter)
+			resp, err := usecase.Allow(ctx, requestApiKey, apiKeyLimiter)
+			if !resp && err == nil {
+				sendTooManyRequest(w)
+				return
+			}
 		} else {
-			usecase.Allow(ctx, clientIp, ipLimiter)
+			resp, err := usecase.Allow(ctx, clientIp, ipLimiter)
+			if !resp && err == nil {
+				sendTooManyRequest(w)
+				return
+			}
 		}
 
 		next.ServeHTTP(w, r)
@@ -92,4 +103,18 @@ func loadRateLimiter(limiterType string) (*core_entity.RateLimiter, error) {
 		Window:        window,
 		BlockDuration: blockDuration,
 	}, nil
+}
+
+func sendTooManyRequest(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusTooManyRequests)
+	response := &controller.Response{
+		Message: TOO_MANY_REQUEST,
+		Status:  http.StatusTooManyRequests,
+	}
+	err := json.NewEncoder(w).Encode(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	slog.Info(TOO_MANY_REQUEST)
 }
