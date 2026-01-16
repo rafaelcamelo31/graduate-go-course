@@ -19,11 +19,11 @@ const (
 )
 
 func main() {
-	if err := godotenv.Load("../.env"); err != nil {
+	if err := godotenv.Load(".env"); err != nil {
 		log.Fatal("Error trying to load env variables")
 		return
 	}
-	addr := os.Getenv(APP_HOST) + ":" + os.Getenv(APP_PORT)
+	port := os.Getenv(APP_PORT)
 
 	redisClient := config.NewRedisClient()
 
@@ -36,5 +36,5 @@ func main() {
 
 	log.Println("Starting server at:", os.Getenv(APP_PORT))
 
-	http.ListenAndServe(addr, middleware.RateLimiterMiddleware(mux, usecase))
+	http.ListenAndServe(":"+port, middleware.RateLimiterMiddleware(mux, usecase))
 }

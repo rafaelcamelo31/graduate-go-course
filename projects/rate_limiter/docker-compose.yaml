@@ -1,0 +1,23 @@
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    command: sh -c "/rate_limiter"
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    env_file:
+      - .env
+    volumes:
+      - redis_data:/data/db
+
+volumes:
+  redis_data:
