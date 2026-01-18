@@ -28,3 +28,38 @@ The rate limit using access token has priority higher than of IP restriction. If
 - Every limiter information must ve stored in Redis using docker compose
 - Create a strategy to allow switching Redis for other persistence method
 - The logic for Rate Limit must be separated from middleware
+
+# Rate Limiter
+
+<img src="asset/diagram.png" height="400">
+
+## Full API Test Flow
+
+**Start Containers**
+
+Run `docker compose up -d` to start server and redis.
+
+**Verify RateLimiter Configuration**
+
+The .env file has configuration for container mapping and API Key/IP allowed max request, window and block duration for each key.
+You'd have to update API_KEYS to add new allowed key and add new
+`[API_KEY_NEW_KEY_NAME_CONFIG_FOR_RATELIMITER]` for newly configured API Key.
+
+**Testing**
+
+There are two test types, unit test and stress test.
+
+Run `go test ./...` to run all of them.
+
+Run `go test ./internal/stress_test -v` to run only stress test.
+
+Use `http://localhost:8080/api/health` to execute endpoint manually, setting API_KEY header with allowed API Key in .env file.
+
+```
+Example:
+
+curl -i \
+  -H "API_KEY: TEST_KEY_1" \
+  http://localhost:8080/api/health
+
+```

@@ -27,7 +27,6 @@ func (r *RedisRepository) IsBlocked(ctx context.Context, key string) (bool, erro
 
 func (r *RedisRepository) GetCount(ctx context.Context, key string) (int64, error) {
 	return r.client.Get(ctx, countKey(key)).Int64()
-
 }
 
 func (r *RedisRepository) Increment(ctx context.Context, key string) (int64, error) {
