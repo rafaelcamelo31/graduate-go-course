@@ -38,10 +38,6 @@ func (r *RedisRepository) SetCount(ctx context.Context, key string, window time.
 	return r.client.Expire(ctx, countKey(key), window).Err()
 }
 
-func (r *RedisRepository) ResetCount(ctx context.Context, key string) error {
-	return r.client.Del(ctx, countKey(key)).Err()
-}
-
 func (r *RedisRepository) Block(ctx context.Context, key string, blockDuration time.Duration) error {
 	return r.client.Set(ctx, blockKey(key), "1", blockDuration).Err()
 }

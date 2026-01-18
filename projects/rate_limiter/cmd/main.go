@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/config"
+	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/config"
 	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/controller"
 	core_usecase "github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/core/usecase"
 	"github.com/rafaelcamelo31/graduate-go-course/projects/rate_limiter/internal/middleware"
@@ -23,7 +24,11 @@ func main() {
 		log.Fatal("Error trying to load env variables")
 		return
 	}
+
 	port := os.Getenv(APP_PORT)
+	if port == "" {
+		log.Fatal("APP_PORT is not set")
+	}
 
 	redisClient := config.NewRedisClient()
 
@@ -34,7 +39,13 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("GET /api/health", http.HandlerFunc(c.GetHealthCheck))
 
-	log.Println("Starting server at:", os.Getenv(APP_PORT))
+	config, err := config.BuildRateLimiterConfig()
+	if err != nil {
+		log.Fatal("rate limiter config caused an error", err)
+	}
 
-	http.ListenAndServe(":"+port, middleware.RateLimiterMiddleware(mux, usecase))
+	slog.Info("Starting server at:", "port", port)
+	if err := http.ListenAndServe(":"+port, middleware.RateLimiterMiddleware(mux, usecase, config)); err != nil {
+		log.Fatal(err)
+	}
 }

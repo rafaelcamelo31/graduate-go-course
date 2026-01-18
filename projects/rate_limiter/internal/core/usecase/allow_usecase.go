@@ -23,6 +23,7 @@ func NewRateLimiterUseCase(repo core_entity.RateLimiterInterface) *RateLimiterUs
 
 func (ak *RateLimiterUseCase) Allow(ctx context.Context, key string, rateLimiter *core_entity.RateLimiter) (bool, error) {
 	slog.Info("checking if the key is blocked")
+
 	blocked, err := ak.repository.IsBlocked(ctx, key)
 	if err != nil {
 		slog.Error("error at repository", "error", err)
@@ -51,10 +52,6 @@ func (ak *RateLimiterUseCase) Allow(ctx context.Context, key string, rateLimiter
 	slog.Info("checking if the count exceeded max request")
 	if count > int64(rateLimiter.MaxRequest) {
 		if err := ak.repository.Block(ctx, key, rateLimiter.BlockDuration); err != nil {
-			slog.Error("error at repository", "error", err)
-			return false, err
-		}
-		if err := ak.repository.ResetCount(ctx, key); err != nil {
 			slog.Error("error at repository", "error", err)
 			return false, err
 		}

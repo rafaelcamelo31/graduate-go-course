@@ -23,7 +23,6 @@ type RateLimiterInterface interface {
 	IsBlocked(ctx context.Context, key string) (bool, error)
 	GetCount(ctx context.Context, key string) (int64, error)
 	Increment(ctx context.Context, key string) (int64, error)
-	ResetCount(ctx context.Context, key string) error
 	SetCount(ctx context.Context, key string, window time.Duration) error
 	Block(ctx context.Context, key string, blockDuration time.Duration) error
 }
