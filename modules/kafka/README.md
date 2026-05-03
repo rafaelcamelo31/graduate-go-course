@@ -46,7 +46,9 @@ Each partition has one server which acts as the “leader” and zero or more se
     <img src="image/distributed_partitions.png" height="500">
 </div>
 
-## Delivery Guarantees
+## Producer
+
+### Delivery Guarantees
 
 - Fire and forget:
   - Ack 0 or None
@@ -63,3 +65,27 @@ Each partition has one server which acts as the “leader” and zero or more se
   - Much slower.
 
 <img src="image/guarantee.png" height="300">
+
+- At most Once
+  - Best performance, but could lose some messages.
+
+- At least Once
+  - Mid performance, It could duplicate messages.
+
+- Exactly Once
+  - Worst performance, delivered exactly once.
+
+### Idempotent
+
+Idempotency in Kafka prevents from Consumer to read duplicate messages sent from Producer.
+
+<img src="image/idempotent.png" height="300">
+
+## Consumer
+
+### Consumer Group
+
+Each partition within a topic is assigned to only one consumer whithin a group, allowing for ordered processing within that partition.
+This allows parallel processing and horizontal scalability.
+
+<img src="image/consumer_groups.png" height="300">
